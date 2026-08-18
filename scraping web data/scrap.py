@@ -12,7 +12,7 @@ headers = {
 books = []
 
 # Change this according to the site's actual listing/search URL
-for page in range(1, 5):
+for page in range(1, 12):
 
     url = f"{BASE_URL}/?page={page}"
 
@@ -76,8 +76,7 @@ df = df.drop_duplicates(
     subset=["title", "author"]
 )
 
-# Keep at least 2000 rows
-df = df.head(2000)
+df=df.head(3000)
 
 df.to_csv(
     "books_dataset.csv",
