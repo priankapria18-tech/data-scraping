@@ -69,9 +69,9 @@ for page in range(1, 12):
     except Exception as e:
         print("Error:", e)
 
-# Remove duplicates
 df = pd.DataFrame(books)
 
+#remove duplicate
 df = df.drop_duplicates(
     subset=["title", "author"]
 )
