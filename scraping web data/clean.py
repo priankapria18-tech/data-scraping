@@ -4,9 +4,10 @@ import re
 # Load scraped dataset
 df = pd.read_csv("books_dataset.csv")
 
-print("Before Cleaning:")
+print("Before Cleaning")
+print("----------------")
 print("Rows:", len(df))
-print("\nMissing values:")
+print("\nMissing Values:")
 print(df.isnull().sum())
 
 
@@ -14,13 +15,7 @@ print(df.isnull().sum())
 # DATA CLEANING
 # -----------------------------
 
-# 1. Remove duplicate records
-df = df.drop_duplicates(
-    subset=["title", "author"]
-)
-
-
-# 2. Clean title
+# 1. Clean title
 df["title"] = (
     df["title"]
     .fillna("")
@@ -30,7 +25,7 @@ df["title"] = (
 )
 
 
-# 3. Clean author
+# 2. Clean author
 df["author"] = (
     df["author"]
     .fillna("Unknown")
@@ -40,7 +35,7 @@ df["author"] = (
 )
 
 
-# 4. Clean price
+# 3. Clean price
 df["price"] = (
     df["price"]
     .fillna("")
@@ -50,14 +45,13 @@ df["price"] = (
     .str.extract(r"(\d+(?:\.\d+)?)")[0]
 )
 
-# Convert price to numeric
 df["price"] = pd.to_numeric(
     df["price"],
     errors="coerce"
 )
 
 
-# 5. Clean URL
+# 4. Clean URL
 df["url"] = (
     df["url"]
     .fillna("")
@@ -66,21 +60,21 @@ df["url"] = (
 )
 
 
-# 6. Remove records without title
+# 5. Remove rows where title is empty
 df = df[df["title"] != ""]
 
 
-# 7. Remove invalid prices
+# 6. Remove invalid prices
 df.loc[df["price"] <= 0, "price"] = pd.NA
 
 
-# 8. Remove duplicate records again
+# 7. Remove duplicate books
 df = df.drop_duplicates(
     subset=["title", "author"]
 )
 
 
-# 9. Reset index
+# 8. Reset index
 df = df.reset_index(drop=True)
 
 
@@ -88,21 +82,22 @@ df = df.reset_index(drop=True)
 # FINAL CHECK
 # -----------------------------
 
-print("\nAfter Cleaning:")
+print("\nAfter Cleaning")
+print("----------------")
 print("Rows:", len(df))
 
-print("\nMissing values:")
+print("\nMissing Values:")
 print(df.isnull().sum())
 
-print("\nDuplicate rows:")
+print("\nDuplicate Rows:")
 print(df.duplicated().sum())
 
-print("\nCleaned Dataset:")
-print(df.head())
+print("\nSample Cleaned Data:")
+print(df.head(10))
 
 
 # -----------------------------
-# SAVE CLEANED DATA
+# SAVE CLEANED DATASET
 # -----------------------------
 
 df.to_csv(
@@ -111,5 +106,5 @@ df.to_csv(
     encoding="utf-8-sig"
 )
 
-print("\nData cleaning completed!")
+print("\nData Cleaning Completed!")
 print("Saved as: books_dataset_cleaned.csv")
