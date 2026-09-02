@@ -1,5 +1,4 @@
 import pandas as pd
-import re
 
 # Load scraped dataset
 df = pd.read_csv("books_dataset.csv")
@@ -15,30 +14,28 @@ print(df.isnull().sum())
 # DATA CLEANING
 # -----------------------------
 
-# 1. Clean title
+# 1. Remove rows with missing values
+df = df.dropna()
+
+# 2. Clean title
 df["title"] = (
     df["title"]
-    .fillna("")
     .astype(str)
     .str.replace(r"\s+", " ", regex=True)
     .str.strip()
 )
 
-
-# 2. Clean author
+# 3. Clean author
 df["author"] = (
     df["author"]
-    .fillna("Unknown")
     .astype(str)
     .str.replace(r"\s+", " ", regex=True)
     .str.strip()
 )
 
-
-# 3. Clean price
+# 4. Clean price
 df["price"] = (
     df["price"]
-    .fillna("")
     .astype(str)
     .str.replace("৳", "", regex=False)
     .str.replace(",", "", regex=False)
@@ -50,29 +47,16 @@ df["price"] = pd.to_numeric(
     errors="coerce"
 )
 
+# 5. Remove rows where price became missing
+df = df.dropna()
 
-# 4. Clean URL
-df["url"] = (
-    df["url"]
-    .fillna("")
-    .astype(str)
-    .str.strip()
-)
-
-
-# 5. Remove rows where title is empty
-df = df[df["title"] != ""]
-
-
-# 6. Remove invalid prices
-df.loc[df["price"] <= 0, "price"] = pd.NA
-
+# 6. Remove invalid price
+df = df[df["price"] > 0]
 
 # 7. Remove duplicate books
 df = df.drop_duplicates(
     subset=["title", "author"]
 )
-
 
 # 8. Reset index
 df = df.reset_index(drop=True)
@@ -92,7 +76,7 @@ print(df.isnull().sum())
 print("\nDuplicate Rows:")
 print(df.duplicated().sum())
 
-print("\nSample Cleaned Data:")
+print("\nCleaned Data:")
 print(df.head(10))
 
 
